@@ -7,4 +7,6 @@ Obviously, physics engines are difficult to build, and my little attempt was har
 
 I plan to update the source to clean it up and document the code more, then tackle some of the bugs and low-hanging fruit in the efficiency department. My goal is to end up with a usable physics library with a small footprint.
 
+*Note:* For historical revision history, you can check out the project on [Google Project Hosting](http://code.google.com/p/box2d-lite-js/) (no longer maintained).
+
 **Thanks for taking the time to check this out!**
