@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Box2d Lite JS</title>
+	<script src="js/box2d-lite.js"></script>
+	<script src="raphael/raphael.js"></script>
+	<style>
+		svg{
+			border:1px solid #ccc;
+		}
+	</style>
+</head>
+<body>
+	<h1>To the console!</h1>
+	
+	<script>
+		var offset = new Box2d.Math.Vector2( 320, 10 );
+
+		function drawLine( start, end ){
+			start = start.neg();
+			start = start.mul( scale );
+			start = start.add( offset );
+			
+			end = end.neg();
+			end = end.mul( scale );
+			end = end.add( offset );
+			
+			var pathString = 'M' + start.x + ' ' + start.y + 'L' + end.x + ' ' + end.y;
+			paper
+				.path( pathString )
+				.attr( 'stroke', '#000' );
+		}
+		
+		function drawBody( body ){
+			var R = new Box2d.Math.Matrix22( body.rotation );
+			var x = body.position;
+			var h = body.width.mul( 0.5 );
+			
+			var v1 = R.mul( new Box2d.Math.Vector2( h.neg().x, h.neg().y ) );
+			v1 = v1.add( x );
+			var v2 = R.mul( new Box2d.Math.Vector2( h.x, h.neg().y ) );
+			v2 = v2.add( x );
+			var v3 = R.mul( new Box2d.Math.Vector2( h.x, h.y ) );
+			v3 = v3.add( x );
+			var v4 = R.mul( new Box2d.Math.Vector2( h.neg().x, h.y ) );
+			v4 = v4.add( x );
+			
+			drawLine( v1, v2 );
+			drawLine( v2, v3 );
+			drawLine( v3, v4 );
+			drawLine( v4, v1 );
+		}
+	
+		var i;
+		var paper = Raphael( 10, 175, 640, 480 );
+		
+		var scale = 5;
+		
+		var timeStep = 1 / 60;
+		var iterations = 10;
+		var gravity = new Box2d.Math.Vector2( 0, -10 );
+		var max = 3.402823466e+38;
+		
+		var world = new Box2d.World( gravity, iterations );
+		
+		var body1 = new Box2d.Body();
+		body1.set( new Box2d.Math.Vector2( 150, 10 ), max );
+		//body1.position.set( 0, -10 );
+		body1.position.set( 0, -90 );
+		world.addBody( body1 );
+		
+		(function(){
+			var i = 5;
+			var tmpBody;
+			while( i-- ){
+				tmpBody = new Box2d.Body();
+				tmpBody.set( new Box2d.Math.Vector2( 5, 5 ), 1000 );
+				tmpBody.position.set(
+					0 + ( 30 * Math.random() ),
+					0 + ( 30 * Math.random() )
+				);
+				tmpBody.angularVelocity = Math.random();
+				world.addBody( tmpBody );
+			}
+		})();
+		
+		var step = function step(){
+			paper.clear();
+			i = world.bodies.length;
+			while( i-- ){
+				drawBody( world.bodies[i] );
+			}
+
+			world.step( timeStep );
+		};
+		//step();
+		window.setInterval( step, timeStep * 1000 );
+	</script>
+</body>
+</html>
