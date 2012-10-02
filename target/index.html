@@ -14,7 +14,7 @@
 	<h1>To the console!</h1>
 	
 	<script>
-		var offset = new Box2d.Math.Vector2( 320, 10 );
+		var offset = new Box2d.Math.Vector2( 320, 0 );
 
 		function drawLine( start, end ){
 			start = start.neg();
@@ -59,31 +59,56 @@
 		var timeStep = 1 / 60;
 		var iterations = 10;
 		var gravity = new Box2d.Math.Vector2( 0, -10 );
-		var max = 3.402823466e+38;
+		var max = Infinity;
 		
 		var world = new Box2d.World( gravity, iterations );
 		
 		var body1 = new Box2d.Body();
-		body1.set( new Box2d.Math.Vector2( 150, 10 ), max );
-		//body1.position.set( 0, -10 );
+		body1.set( new Box2d.Math.Vector2( 150, 1 ), max );
 		body1.position.set( 0, -90 );
 		world.addBody( body1 );
+
+		var body2 = new Box2d.Body();
+		body2.set( new Box2d.Math.Vector2( 1, 100 ), max );
+		body2.position.set( -50, -50 );
+		world.addBody( body2 );
+
+		var body3 = new Box2d.Body();
+		body3.set( new Box2d.Math.Vector2( 1, 100 ), max );
+		body3.position.set( 50, -50 );
+		world.addBody( body3 );
+
+		var body4 = new Box2d.Body();
+		body4.set( new Box2d.Math.Vector2( 1, 1 ), max );
+		body4.position.set( 0, 0 );
+		world.addBody( body4 );
+
+		var i = 5;
+		var tmpBody;
+		while( i-- ){
+			tmpBody = new Box2d.Body();
+			tmpBody.set( new Box2d.Math.Vector2( 5, 5 ), 1000 );
+			tmpBody.position.set(
+				0 + ( 30 * Math.random() ),
+				0 + ( 30 * Math.random() )
+			);
+			tmpBody.angularVelocity = Math.random();
+			world.addBody( tmpBody );
+		}
 		
-		(function(){
-			var i = 5;
-			var tmpBody;
-			while( i-- ){
-				tmpBody = new Box2d.Body();
-				tmpBody.set( new Box2d.Math.Vector2( 5, 5 ), 1000 );
-				tmpBody.position.set(
-					0 + ( 30 * Math.random() ),
-					0 + ( 30 * Math.random() )
-				);
-				tmpBody.angularVelocity = Math.random();
-				world.addBody( tmpBody );
-			}
+
+		// shim layer with setTimeout fallback
+		window.requestAnimFrame = (function(){
+			return  window.requestAnimationFrame || 
+			window.webkitRequestAnimationFrame || 
+			window.mozRequestAnimationFrame	|| 
+			window.oRequestAnimationFrame || 
+			window.msRequestAnimationFrame || 
+			function( callback ){
+				window.setTimeout(callback, 1000 / 60);
+			};
 		})();
-		
+
 		var step = function step(){
 			paper.clear();
 			i = world.bodies.length;
@@ -93,8 +118,11 @@
 
 			world.step( timeStep );
 		};
-		//step();
-		window.setInterval( step, timeStep * 1000 );
+
+		(function animloop(){
+			requestAnimFrame(animloop);
+			step();
+		})();
 	</script>
 </body>
 </html>

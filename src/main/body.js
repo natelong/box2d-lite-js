@@ -14,9 +14,9 @@ Box2d.Body = function Body(){
 	this.friction = 0.2;
 	
 	this.width = new Box2d.Math.Vector2( 1, 1 );
-	this.mass = 3.402823466e+38;
+	this.mass = Infinity;
 	this.invMass = 0;
-	this.I = 3.402823466e+38;
+	this.I = Infinity;
 	this.invI = 0;
 	this.id;
 	this.type = Box2d.Body.type;
@@ -38,13 +38,13 @@ Box2d.Body.prototype.set = function set( w, m ){
 	this.width = w;
 	this.mass = m;
 	
-	if( this.mass < 3.402823466e+38 ){
+	if( this.mass < Infinity ){
 		this.invMass = 1 / this.mass;
 		this.I = this.mass * ( this.width.x * this.width.x + this.width.y * this.width.y ) / 12;
 		this.invI = 1 / this.I;
 	}else{
 		this.invMass = 0;
-		this.I = 3.402823466e+38;
+		this.I = Infinity;
 		this.invI = 0;
 	}
 };
